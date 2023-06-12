@@ -115,22 +115,23 @@ class Aluno:
 
     def solicita_ingresso(self, curso, universidade):
         for i in range(len(universidade.cursos)):
-            if universidade.cursos[i].nome == curso.nome:
-                if self.pont_enem >= universidade.cursos[i].nota_corte:
-                    self.efetiva_matricula(curso, universidade)
+            if universidade.cursos[i].get_nome() == curso.get_nome():
+                if self.get_pont_enem() >= universidade.cursos[i].get_nota_corte():
                     return True
                 else:
                     return False 
                 
 
     def efetiva_matricula(self, curso, universidade):
-        for i in range(len(universidade.cursos)):
-            if universidade.cursos[i].nome == curso.nome:
-                if universidade.cursos[i].vagas == 0:
-                    return False
-                else:
-                    universidade.cursos[i].vagas -= 1
-                    return True
+        if self.solicita_ingresso(curso, universidade) == True:
+            for i in range(len(universidade.cursos)):
+                if universidade.cursos[i].get_nome() == curso.get_nome():
+                    if universidade.cursos[i].get_vagas() == 0:
+                        return False
+                    else:
+                        valor = universidade.cursos[i].get_vagas() - 1
+                        universidade.cursos[i].set_vagas(valor)
+                        return True
         
     def solicita_transferencia(self, univ_origem, curso_origem, univ_destino):
         pass
@@ -166,6 +167,6 @@ sisu.incluir_universidade(uespi.get_nome())
 
 joao = Aluno("123456", "João", "01/01/2000", 500)
 
-print(ifpi)
+print(joao.efetiva_matricula(Biologia, ifpi))
 
 
