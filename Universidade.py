@@ -15,7 +15,7 @@ class Universidade:
         self.__sigla = sigla
         self.__nome = nome
         self.__tipo =tipo
-        self.cursos = []
+        self.__cursos = []
 
     def get_sigla(self):
         return self.__sigla
@@ -27,13 +27,16 @@ class Universidade:
         return self.__tipo
 
     def cadastrar_curso(self, curso):
-        self.cursos.append(curso)
+        self.__cursos.append(curso)
+
+    def get_cursos(self):
+        return self.__cursos
 
     def __repr__(self):
         return self.get_nome()
 
     def __str__(self):
-        return f'{self.get_sigla()}, {self.get_nome()}, {self.get_tipo()}, {self.cursos}'
+        return f'{self.get_sigla()}, {self.get_nome()}, {self.get_tipo()}, {self.get_cursos()}'
 
 #----------------   Class Curso   ------------------------------
 class Curso:
@@ -123,44 +126,44 @@ class Aluno:
     
 
     def solicita_ingresso(self, curso, universidade):
-        for i in range(len(universidade.cursos)):
-            if universidade.cursos[i].get_nome() == curso.get_nome():
-                if self.get_pont_enem() >= universidade.cursos[i].get_nota_corte():
+        for i in range(len(universidade.get_cursos())):
+            if universidade.get_cursos()[i].get_nome() == curso.get_nome():
+                if self.get_pont_enem() >= universidade.get_cursos()[i].get_nota_corte():
                     return True
                 else:
                     return False 
                 
     def efetiva_matricula(self, curso, universidade):
         if self.solicita_ingresso(curso, universidade) == True:
-            for i in range(len(universidade.cursos)):
-                if universidade.cursos[i].get_nome() == curso.get_nome():
-                    if universidade.cursos[i].get_vagas() == 0:
+            for i in range(len(universidade.get_cursos())):
+                if universidade.get_cursos()[i].get_nome() == curso.get_nome():
+                    if universidade.get_cursos()[i].get_vagas() == 0:
                         return False
                     else:
-                        valor = universidade.cursos[i].get_vagas() - 1
-                        universidade.cursos[i].set_vagas(valor)
+                        valor = universidade.get_cursos()[i].get_vagas() - 1
+                        universidade.get_cursos()[i].set_vagas(valor)
 
                         if universidade.get_tipo() == 'publica':
                             self.set_matricula_uni_publica()
                         else:
                             self.set_matricula_uni_priv()
 
-                        universidade.cursos[i].cadastrar_aluno(joao)
-
+                        universidade.get_cursos()[i].cadastrar_aluno(joao)
+                        print("ok")
                         return True
         
     def solicita_transferencia(self, univ_origem, curso_origem, univ_destino):
         for i in range(len(univ_origem.cursos)):
-            if univ_origem.cursos[i].get_nome() == curso_origem:
-                valor = univ_destino.cursos[i].get_vagas() - 1
-                univ_destino.cursos[i].set_vagas(valor)
+            if univ_origem.get_cursos()[i].get_nome() == curso_origem:
+                valor = univ_destino.get_cursos()[i].get_vagas() - 1
+                univ_destino.get_cursos()[i].set_vagas(valor)
 
                 if univ_destino.get_tipo() == 'publica':
                     self.set_matricula_uni_publica()
                 else:
                     self.set_matricula_uni_priv()
 
-                univ_destino.cursos[i].cadastrar_aluno(joao)
+                univ_destino.get_cursos()[i].cadastrar_aluno(joao)
        
     def __str__(self):
         return f'{self.get_cpf()}, {self.get_nome()}, {self.get_dt_nasc()}, {self.get_matricula_uni_publica()}, {self.get_matricula_uni_priv()}, {self.get_pont_enem()}'
@@ -199,7 +202,7 @@ sisu.incluir_universidade(uespi.get_nome())
 joao = Aluno("123456", "João", "01/01/2000", 500)
 
 
-print(joao.efetiva_matricula(Biologia, ufpi))
+print(joao.efetiva_matricula(Biologia, ifpi))
 
 #print(ifpi.cursos[2].get_nome())
 
