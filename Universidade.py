@@ -149,7 +149,7 @@ class Aluno:
                             self.set_matricula_uni_priv()
 
                         universidade.get_cursos()[i].cadastrar_aluno(joao)
-                        print("ok")
+                        
                         return True
         
     def solicita_transferencia(self, univ_origem, curso_origem, univ_destino):
@@ -204,10 +204,7 @@ joao = Aluno("123456", "João", "01/01/2000", 500)
 
 print(joao.efetiva_matricula(Biologia, ifpi))
 
-#print(ifpi.cursos[2].get_nome())
+print(ifpi.get_cursos()[2].get_nome())
 
-#print(joao.solicita_transferencia(ifpi, 'Biologia', uespi))
-
-#print(ifpi.cursos[2].get_alunos())
-#print(Biologia.alunos)
+print(ifpi.get_cursos()[2].get_alunos())
 
