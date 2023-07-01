@@ -1,13 +1,12 @@
 #----------------   Class Sisu   ------------------------------
 class Sisu:
-    def __init__(self):
-        self.universidade = []
+    universidades = []
 
     def incluir_universidade(self, universidade):
-        self.universidade.append(universidade)
+        self.universidades.append(universidade)
     
     def __str__(self):
-        return f'{self.universidade}'
+        return f'{self.universidades}'
     
 
 #----------------   Class Universidade   ------------------------------
@@ -36,8 +35,6 @@ class Universidade:
     def __str__(self):
         return f'{self.get_sigla()}, {self.get_nome()}, {self.get_tipo()}, {self.cursos}'
 
-
-
 #----------------   Class Curso   ------------------------------
 class Curso:
     def __init__(self, id, nome, duracao, vagas, nota_corte):
@@ -46,7 +43,7 @@ class Curso:
         self.__duracao = duracao 
         self.__vagas = vagas 
         self.__nota_corte = nota_corte
-        self.alunos = []  
+        self.__alunos = []  
 
 
     def get_id(self):
@@ -73,25 +70,31 @@ class Curso:
     def set_nota_corte(self, valor):
         self.__nota_corte = valor
 
-    def cadastrar_aluno(self):
-        pass 
+    def get_alunos(self):
+        return self.__alunos
+    
+    def set_alunos(self, aluno):
+        for i in range(len(self.alunos)):
+            if self.alunos[i].get_cpf() == aluno.get_cpf():
+                del self.alunos[i]
+
+    def cadastrar_aluno(self, aluno):
+        self.__alunos.append(aluno)
 
     def __str__(self):
-        return f'{self.get_id()}, {self.get_nome()}, {self.get_duracao()}, {self.get_vagas()}, {self.get_nota_corte()}, {self.alunos}'
+        return f'{self.get_id()}, {self.get_nome()}, {self.get_duracao()}, {self.get_vagas()}, {self.get_nota_corte()}, {self.get_alunos()}'
     
     def __repr__(self):
-        return f'{self.get_id()}, {self.get_nome()}, {self.get_duracao()}, {self.get_vagas()}, {self.get_nota_corte()}, {self.alunos}'
+        return f'{self.get_id()}, {self.get_nome()}, {self.get_duracao()}, {self.get_vagas()}, {self.get_nota_corte()}, {self.get_alunos()}'
     
-
-
 #----------------   Class Aluno   ------------------------------
 class Aluno:
-    def __init__(self, cpf, nome, dt_nasc, pont_enem):
+    def __init__(self, cpf, nome, dt_nasc, pont_enem, matricula_uni_publica = False, matricula_uni_priv = False):
         self.__cpf = cpf
         self.__nome = nome
         self.__dt_nasc = dt_nasc 
-        self.__matricula_uni_publica = False
-        self.__matricula_uni_priv = False
+        self.__matricula_uni_publica = matricula_uni_publica
+        self.__matricula_uni_priv = matricula_uni_priv
         self.__pont_enem = pont_enem
 
     def get_cpf(self):
@@ -105,9 +108,15 @@ class Aluno:
     
     def get_matricula_uni_publica(self):
         return self.__matricula_uni_publica
+    
+    def set_matricula_uni_publica(self, valor = True):
+        self.__matricula_uni_publica = valor
 
     def get_matricula_uni_priv(self):
-        return self.__matricula_uni_priv
+        return self.__matricula_uni_priv 
+    
+    def set_matricula_uni_priv(self, valor = True):
+        self.__matricula_uni_publica = valor
     
     def get_pont_enem(self):
         return self.__pont_enem
@@ -121,7 +130,6 @@ class Aluno:
                 else:
                     return False 
                 
-
     def efetiva_matricula(self, curso, universidade):
         if self.solicita_ingresso(curso, universidade) == True:
             for i in range(len(universidade.cursos)):
@@ -131,15 +139,34 @@ class Aluno:
                     else:
                         valor = universidade.cursos[i].get_vagas() - 1
                         universidade.cursos[i].set_vagas(valor)
+
+                        if universidade.get_tipo() == 'publica':
+                            self.set_matricula_uni_publica()
+                        else:
+                            self.set_matricula_uni_priv()
+
+                        universidade.cursos[i].cadastrar_aluno(joao)
+
                         return True
         
     def solicita_transferencia(self, univ_origem, curso_origem, univ_destino):
-        pass
+        for i in range(len(univ_origem.cursos)):
+            if univ_origem.cursos[i].get_nome() == curso_origem:
+                valor = univ_destino.cursos[i].get_vagas() - 1
+                univ_destino.cursos[i].set_vagas(valor)
 
+                if univ_destino.get_tipo() == 'publica':
+                    self.set_matricula_uni_publica()
+                else:
+                    self.set_matricula_uni_priv()
+
+                univ_destino.cursos[i].cadastrar_aluno(joao)
+       
     def __str__(self):
         return f'{self.get_cpf()}, {self.get_nome()}, {self.get_dt_nasc()}, {self.get_matricula_uni_publica()}, {self.get_matricula_uni_priv()}, {self.get_pont_enem()}'
-
-
+    
+    def __repr__(self):
+        return f'{self.get_cpf()}, {self.get_nome()}, {self.get_dt_nasc()}, {self.get_matricula_uni_publica()}, {self.get_matricula_uni_priv()}, {self.get_pont_enem()}'
 
 
 TDS = Curso(266, "Técnico Desenvolvimento de Sistemas", "1,5 anos", 40, 600)
@@ -158,6 +185,10 @@ ifpi.cadastrar_curso(TDS)
 ifpi.cadastrar_curso(Administração)
 ifpi.cadastrar_curso(Biologia)
 
+uespi.cadastrar_curso(TDS)
+uespi.cadastrar_curso(Administração)
+uespi.cadastrar_curso(Biologia)
+
 sisu = Sisu()
 sisu.incluir_universidade(ifpi.get_nome())
 sisu.incluir_universidade(ufpi.get_nome())
@@ -167,6 +198,13 @@ sisu.incluir_universidade(uespi.get_nome())
 
 joao = Aluno("123456", "João", "01/01/2000", 500)
 
-print(joao.efetiva_matricula(Biologia, ifpi))
 
+print(joao.efetiva_matricula(Biologia, ufpi))
+
+#print(ifpi.cursos[2].get_nome())
+
+#print(joao.solicita_transferencia(ifpi, 'Biologia', uespi))
+
+#print(ifpi.cursos[2].get_alunos())
+#print(Biologia.alunos)
 
